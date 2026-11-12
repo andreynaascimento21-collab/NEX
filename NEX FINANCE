@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
+<title>NEXUS FINANCE</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080d18;color:#f5f7ff;font-family:Arial,sans-serif;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{color:#46d9ff;font-size:25px;font-weight:bold;letter-spacing:3px}
+.tag{color:#8996aa;font-size:12px}
+h1{font-size:25px;margin-top:35px}
+.balance{background:linear-gradient(135deg,#142d49,#10172b);border:1px solid #245478;border-radius:18px;padding:22px;margin-top:20px}
+.balance small{color:#a9bdd0}
+.amount{font-size:32px;font-weight:bold;margin:12px 0}
+button{background:#122b43;color:#54dfff;border:1px solid #28618a;padding:12px;border-radius:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.card{background:#111b2b;border:1px solid #26364b;border-radius:14px;padding:18px}
+.card span{font-size:23px}
+.card p{color:#9aabc0;margin-bottom:0}
+h2{font-size:18px;margin-top:30px}
+input{width:100%;padding:13px;background:#111b2b;border:1px solid #34455c;border-radius:9px;color:white;margin:7px 0}
+.action{width:100%;margin-top:10px;background:#087fa6;color:white}
+footer{text-align:center;color:#63758c;font-size:11px;margin-top:35px}
+</style>
+</head>
+<body>
+<header>
+<div>
+<div class="logo">NEXUS</div>
+<div class="tag">FINANCE SYSTEM</div>
+</div>
+<div>◉ <span class="tag">SISTEMA PESSOAL</span></div>
+</header>
+
+<h1>Painel financeiro</h1>
+<div class="balance">
+<small>Saldo disponível</small>
+<div class="amount" id="saldo">R$ 0,00</div>
+<button onclick="alternar()">Ocultar / Mostrar saldo</button>
+</div>
+
+<div class="grid">
+<div class="card"><span>📈</span><p>Entradas</p><strong id="entradas">R$ 0,00</strong></div>
+<div class="card"><span>📉</span><p>Despesas</p><strong id="despesas">R$ 0,00</strong></div>
+<div class="card"><span>💳</span><p>Cartões</p><strong>4 cadastrados</strong></div>
+<div class="card"><span>⚠️</span><p>Pendências</p><strong>Em controle</strong></div>
+</div>
+
+<h2>Adicionar movimentação</h2>
+<input id="descricao" placeholder="Descrição">
+<input id="valor" type="number" step="0.01" placeholder="Valor em R$">
+<select id="tipo" style="width:100%;padding:13px;background:#111b2b;color:white;border-radius:9px">
+<option value="entrada">Entrada</option>
+<option value="despesa">Despesa</option>
+</select>
+<button class="action" onclick="adicionar()">REGISTRAR MOVIMENTAÇÃO</button>
+
+<h2>Últimas movimentações</h2>
+<div id="lista" class="card">Nenhuma movimentação registrada.</div>
+
+<footer>NEXUS FINANCE • CONTROLE INTELIGENTE</footer>
+
+<script>
+let movimentos=[];
+let visivel=true;
+
+function dinheiro(v){
+return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+
+function atualizar(){
+let entradas=movimentos.filter(m=>m.tipo==='entrada').reduce((s,m)=>s+m.valor,0);
+let despesas=movimentos.filter(m=>m.tipo==='despesa').reduce((s,m)=>s+m.valor,0);
+document.getElementById('entradas').textContent=dinheiro(entradas);
+document.getElementById('despesas').textContent=dinheiro(despesas);
+document.getElementById('saldo').textContent=dinheiro(entradas-despesas);
+document.getElementById('lista').innerHTML=movimentos.length?
+movimentos.slice().reverse().map(m=>'<p>'+m.descricao+' — '+dinheiro(m.valor)+' ('+m.tipo+')</p>').join(''):'Nenhuma movimentação registrada.';
+if(!visivel) esconder();
+}
+
+function adicionar(){
+let descricao=document.getElementById('descricao').value.trim();
+let valor=Number(document.getElementById('valor').value);
+let tipo=document.getElementById('tipo').value;
+if(!descricao||!Number.isFinite(valor)||valor<=0){
+alert('Preencha a descrição e um valor válido.');
+return;
+}
+movimentos.push({descricao,valor,tipo});
+document.getElementById('descricao').value='';
+document.getElementById('valor').value='';
+atualizar();
+}
+
+function esconder(){
+document.getElementById('saldo').textContent='••••••';
+}
+function alternar(){
+visivel=!visivel;
+atualizar();
+}
+</script>
+</body>
+</html>
